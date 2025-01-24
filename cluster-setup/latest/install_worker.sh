@@ -159,11 +159,13 @@ runtime-endpoint: unix:///run/containerd/containerd.sock
 EOF
 }
 
+### Find Private IP address on eth1
+PRIVATE_IP=$(ip addr show eth1 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
 
 ### kubelet should use containerd
 {
 cat <<EOF | sudo tee /etc/default/kubelet
-KUBELET_EXTRA_ARGS="--container-runtime-endpoint unix:///run/containerd/containerd.sock"
+KUBELET_EXTRA_ARGS="--container-runtime-endpoint unix:///run/containerd/containerd.sock --node-ip ${PRIVATE_IP}"
 EOF
 }
 
